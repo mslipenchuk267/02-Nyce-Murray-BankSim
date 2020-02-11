@@ -50,6 +50,7 @@ void Bank_test(Bank *b) {
     for(int i = 0; i < b->numAccounts; ++i) {
         pthread_t currentThreadId = pthread_self();
         Account *currAccount = b->accounts[i];
+        // Print out calling thread ID and then A
         printf("%lu Account[%d] balance %d\n", pthread_self(), currAccount->id, currAccount->balance);
         sum += b->accounts[i]->balance;
     }

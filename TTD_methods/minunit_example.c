@@ -7,7 +7,7 @@
  int tests_run = 0;
  
  int foo = 7;
- int bar = 4;
+ int bar = 5;
  
  static char * test_foo() {
      mu_assert("error, foo != 7", foo == 7);
@@ -35,7 +35,7 @@
      }
 
      printf("Tests run: %d\n", tests_run);
-     assert(tests_run == 1);
+     assert(tests_run == 2);
      return result != 0;
  }
 
