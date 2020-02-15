@@ -5,6 +5,28 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <iostream>
+#include <fstream> // file opss
+#include <set> // for set operations 
+#include <vector>
+#include <string>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h> // for size_t
+#include <pthread.h>
+#include <sys/socket.h>
+#include <arpa/inet.h> //inet_addr
+#include <unistd.h>
+#include <unordered_set>
+
+using namespace std;
+
+// declare mutexes & condition variables
+extern pthread_mutex_t mutex_lock;
+extern pthread_cond_t cond;
+extern unordered_set<int> accountSet;
+
 typedef struct Account {
     int balance;
     int id;

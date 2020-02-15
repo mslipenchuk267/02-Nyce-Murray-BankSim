@@ -1,4 +1,4 @@
 CC=gcc
 
 BankSim: *.c
-	gcc -pthread -o BankSim *.c
+	g++ -pthread -o BankSim *.c
