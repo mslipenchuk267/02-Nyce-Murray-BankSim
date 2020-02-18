@@ -41,8 +41,7 @@ void Bank_transfer(Bank *b, int from, int to, int amount) {
       // Create testing thread
       pthread_t testing_thread;
       // Execute test_thread
-      Bank *params = TransferTestThreadParameters_new(b);
-      pthread_create(&testing_thread, NULL, test_thread, params);
+      pthread_create(&testing_thread, NULL, test_thread, (void *) b);
       // Join test thread after done executing Bank_test()
       pthread_join(testing_thread, NULL);
     }
