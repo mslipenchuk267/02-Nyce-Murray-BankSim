@@ -63,7 +63,12 @@ void Bank_test(Bank *b) {
     }
 }
 
+// Refactoring is a disciplined technique for restructuring an existing body of code,
+// altering its internal structure without changing its external behavior.
+// turn this into a thread to test
+
 /* should test every 10 transacs */
+
 int Bank_shouldTest(Bank *b) {
     b->ntransacts++;
     return b->ntransacts % NTEST == 0;
