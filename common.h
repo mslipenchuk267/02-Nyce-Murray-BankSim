@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <semaphore.h>
 #include <iostream>
 #include <fstream> // file opss
 #include <set> // for set operations 
@@ -25,8 +25,7 @@ using namespace std;
 // declare mutexes & condition variables
 extern pthread_mutex_t mutex_lock;
 extern pthread_cond_t cond;
-extern pthread_mutex_t mutex_test_lock;
-extern pthread_cond_t cond_test;
+extern sem_t test_sem;
 extern unordered_set<int> accountSet;
 
 typedef struct Account {
