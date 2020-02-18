@@ -25,6 +25,8 @@ using namespace std;
 // declare mutexes & condition variables
 extern pthread_mutex_t mutex_lock;
 extern pthread_cond_t cond;
+extern pthread_mutex_t mutex_test_lock;
+extern pthread_cond_t cond_test;
 extern unordered_set<int> accountSet;
 
 typedef struct Account {

@@ -3,8 +3,14 @@
 #define NACCOUNTS 10
 #define INITIAL_BALANCE 10000
 
+// For accessing accountSet
 pthread_mutex_t mutex_lock;
 pthread_cond_t cond;
+// For running test thread
+pthread_mutex_t mutex_test_lock;
+pthread_cond_t cond_test;
+// Set holding account number of accounts currently
+// making transactions
 unordered_set<int> accountSet;
 
 int main() {

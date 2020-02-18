@@ -14,4 +14,6 @@ int Bank_shouldTest(Bank *b);
 
 TransferThreadParameters *TransferThreadParameters_new(Bank *b, int fromAccount, int maxAmount);
 void *transfer_thread(void *vargp);
+Bank *TransferTestThreadParameters_new(Bank *b);
+void *test_thread(void *vargp);
 #endif
