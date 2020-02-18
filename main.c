@@ -24,5 +24,7 @@ int main() {
 
     Bank *b = Bank_new(NACCOUNTS, INITIAL_BALANCE);
     Bank_open(b);
+    // Destroy our semaphore for the testing thread
+    sem_destroy(&test_sem);
     Bank_destroy(b);
 }
