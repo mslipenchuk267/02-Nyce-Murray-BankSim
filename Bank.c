@@ -37,13 +37,14 @@ void Bank_open(Bank *b) {
 
 void Bank_transfer(Bank *b, int from, int to, int amount) {
     // Uncomment line when race condition in Bank_test() has been resolved.
-    // if(Bank_shouldTest(b)) Bank_test(b);
+    if(Bank_shouldTest(b)) Bank_test(b);
 
     if(Account_withdraw(b->accounts[from], amount)) {
         Account_deposit(b->accounts[to], amount);
     }
 }
 
+/* test [agregate amount from all account] & [total initialBalance] */
 void Bank_test(Bank *b) {
     int sum = 0;
 
@@ -63,6 +64,7 @@ void Bank_test(Bank *b) {
     }
 }
 
+/* should test every 10 transacs */
 int Bank_shouldTest(Bank *b) {
     b->ntransacts++;
     return b->ntransacts % NTEST == 0;
