@@ -1,5 +1,10 @@
 # BankSim
 
+# Requirements 
+
+# Testing
+We mainly used manual testing for this assignment.
+
 ## Race Condition Explanation
 A race condition could occue because there are no locks or wait/signals around the Bank_transfer(...) function. When this function is called it makes 2 calls in the following order: 
 
