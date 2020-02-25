@@ -39,5 +39,6 @@ int main() {
     Bank_open(b);
     // Destroy our semaphore for the testing thread and bank to clean up
     sem_destroy(&test_sem);
+    sem_destroy(&done_sem);
     Bank_destroy(b);
 }

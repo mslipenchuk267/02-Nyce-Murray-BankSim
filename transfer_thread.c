@@ -19,30 +19,48 @@ void *transfer_thread(void *vargp) {
         int toAccount = (int)(rand() % b->numAccounts);
         int amount = (int)(rand() % maxAmount);
 
-        // Check if done before proceeding to checking if we can actually afford transaction
+        /*------------------mutex & sem implement for done check---------------*/
         pthread_mutex_lock(&mutex_done_lock);
         int done_sem_value;
         sem_getvalue(&done_sem, &done_sem_value);
         //printf("Not done thread | done sem value %d\n", done_sem_value);
-        if(done_sem_value > 0) { // Indicating 1 thread just finished
-            printf("Thread [%d] Done : done_sem value = %d\n", fromAccount, done_sem_value);
+        if (done_sem_value > 0) { // Indicating 1 thread just finished
+            sem_post(&done_sem);
+            sem_getvalue(&done_sem, &done_sem_value);
+            printf("Thread [%d] Done | Total Done Threads = %d\n", fromAccount, done_sem_value);
             pthread_mutex_unlock(&mutex_done_lock);
-            //pthread_exit((void *)pthread_self());
-            //pthread_cancel(pthread_self());
+
             return NULL;
-            //break;
         }
         pthread_mutex_unlock(&mutex_done_lock);
 
-
+        /*------------------mutex & cond var implement for balance check---------------*/
         pthread_mutex_lock(&mutex_balance_lock);
         // Check if balance is less than amount to transefer 
         while (b->accounts[fromAccount]->balance < amount){
+            /*------------------mutex & sem implement for done check---------------*/
+            pthread_mutex_lock(&mutex_done_lock);
+            int done_sem_value;
+            sem_getvalue(&done_sem, &done_sem_value);
+            //printf("Not done thread | done sem value %d\n", done_sem_value);
+            if (done_sem_value > 0) { // Indicating 1 thread just finished
+                sem_post(&done_sem);
+                sem_getvalue(&done_sem, &done_sem_value);
+                printf("Thread [%d] Done | Total Done Threads = %d\n", fromAccount, done_sem_value);
+                pthread_mutex_unlock(&mutex_done_lock);
+                // Unlock the balance lock too so we can let other deferred accounts return as well
+                pthread_mutex_unlock(&mutex_balance_lock);
+
+                return NULL;
+            }
+            pthread_mutex_unlock(&mutex_done_lock);
+
             // Defer the transaction
-            printf("Account [%d] Deffered (balance < amount) | $%d < $%d\n", fromAccount, b->accounts[fromAccount]->balance, amount);
+            printf("Account [%d] Deferred (balance < amount) | $%d < $%d\n", fromAccount, b->accounts[fromAccount]->balance, amount);
             pthread_cond_wait(&b->accounts[fromAccount]->cond_balance, &mutex_balance_lock);
         }
         pthread_mutex_unlock(&mutex_balance_lock);
+
 
         /*-----------------Do a semaphore wait for test--------------*/
         // Can go through here NTEST times
@@ -60,7 +78,7 @@ void *transfer_thread(void *vargp) {
         accountSet.insert(toAccount);
         accountSet.insert(fromAccount);
         /*------------------Bank transfer----------------*/
-        printf("Account [%d, %d]\t sending $%d\t-> Account [%d]\n", fromAccount, b->accounts[fromAccount]->balance, amount, toAccount);
+        printf("Account [%d, $%d]\t sending $%d\t-> Account [%d]\n", fromAccount, b->accounts[fromAccount]->balance, amount, toAccount);
         Bank_transfer(b, fromAccount, toAccount, amount);
         /*-----------------------------------------------*/
         accountSet.erase(toAccount);
@@ -73,12 +91,19 @@ void *transfer_thread(void *vargp) {
 
     // Signal all threads that it's time to return and join
     pthread_mutex_lock(&mutex_done_lock);
-    sem_post(&done_sem); 
+    sem_post(&done_sem);
     pthread_mutex_unlock(&mutex_done_lock);
     int done_sem_value;
     sem_getvalue(&done_sem, &done_sem_value);
-    printf("-------------------------------\n\n\n\n********\nFirst done Thread\n********\n Thread [%d] : done_sem value = %d\n\n\n\n-------------------------------\n", fromAccount, done_sem_value);
-    //pthread_exit((void *)pthread_self());
+    printf("-------------------------------\n\n\n\nFirst done Thread\nThread [%d] : Total Done Threads = %d\n\n\n\n-------------------------------\n", fromAccount, done_sem_value);
+    
+    // Notify all other transfer threads waiting to get money in account that we are done 
+    pthread_mutex_lock(&mutex_balance_lock);
+    int i;
+    for (i = 0; i < b->numAccounts; ++i) {
+        pthread_cond_signal(&b->accounts[i]->cond_balance); 
+    }
+    pthread_mutex_unlock(&mutex_balance_lock);
+
     return NULL;
-    //pthread_cancel(pthread_self());
 }
