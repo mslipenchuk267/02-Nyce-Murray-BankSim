@@ -24,6 +24,7 @@ using namespace std;
 
 // declare mutexes & condition variables
 extern pthread_mutex_t mutex_lock;
+extern pthread_mutex_t mutex_balance_lock;
 extern pthread_cond_t cond;
 extern sem_t test_sem;
 extern unordered_set<int> accountSet;
@@ -32,6 +33,7 @@ typedef struct Account {
     int balance;
     int id;
     pthread_t thread;
+    pthread_cond_t cond_balance;
 } Account;
 
 typedef struct Bank {
