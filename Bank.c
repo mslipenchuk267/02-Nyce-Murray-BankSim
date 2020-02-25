@@ -49,7 +49,6 @@ void Bank_transfer(Bank *b, int from, int to, int amount) {
       pthread_join(testing_thread, NULL);
     }
 
-
     if(Account_withdraw(b->accounts[from], amount)) {
         Account_deposit(b->accounts[to], amount);
     }
