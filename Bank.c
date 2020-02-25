@@ -29,7 +29,7 @@ void Bank_open(Bank *b) {
     for(int i = 0; i < b->numAccounts; ++i) {
         pthread_join(b->accounts[i]->thread, NULL);
     }
-    
+
     Bank_test(b);
 
     puts("Bank is finished running.");
@@ -37,7 +37,14 @@ void Bank_open(Bank *b) {
 
 void Bank_transfer(Bank *b, int from, int to, int amount) {
     // Uncomment line when race condition in Bank_test() has been resolved.
-    if(Bank_shouldTest(b)) Bank_test(b);
+    if(Bank_shouldTest(b)) {
+      // Create testing thread
+      pthread_t testing_thread;
+      // Execute test_thread
+      pthread_create(&testing_thread, NULL, test_thread, (void *) b);
+      // Join test thread after done executing Bank_test()
+      pthread_join(testing_thread, NULL);
+    }
 
     if(Account_withdraw(b->accounts[from], amount)) {
         Account_deposit(b->accounts[to], amount);

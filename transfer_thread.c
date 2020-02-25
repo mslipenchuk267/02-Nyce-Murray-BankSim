@@ -18,7 +18,13 @@ void *transfer_thread(void *vargp) {
     for(int i = 0; i < 10000; ++i) {
         int toAccount = (int)(rand() % b->numAccounts);
         int amount = (int)(rand() % maxAmount);
-        
+
+        /*-----------------Do a semaphore wait for test--------------*/
+        // Can go through here NTEST times
+        // When NTEST bank transfers are executed, we make test_thread
+        // and test_thread increments test_sem back to 10 so we can resume.
+        sem_wait(&test_sem);
+
         /*------------------mutex & cond var implement---------------*/
         pthread_mutex_lock(&mutex_lock);
         while (accountSet.count(toAccount) != 0 && accountSet.count(fromAccount) != 0){
