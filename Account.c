@@ -22,6 +22,7 @@ int Account_withdraw(Account *a, int amount) {
         a->balance = newBalance;
         return 1;
     } else {
+        // If task 4 solution is working then this should never be executed
         return 0;
     }
 }

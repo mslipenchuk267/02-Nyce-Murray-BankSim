@@ -7,7 +7,12 @@ Bank *Bank_new(int numAccounts, int initialBalance) {
     b->ntransacts = 0;
     b->accounts = (Account **)malloc(numAccounts * sizeof(Account *));
     for(int i = 0; i < numAccounts; ++i) {
+        // create struct and do what initilization we can inside of it
         b->accounts[i] = Account_new(i, initialBalance);
+        // init each account balance condition variables
+        //  We're composing a compound literal here because we cannot 
+        //  init the cond_balance cv inside of a struct. So we call it here
+        pthread_cond_init(b->accounts[i]->cond_balance, NULL);
     }
     
     return b;

@@ -10,6 +10,8 @@ pthread_cond_t cond;
 pthread_mutex_t mutex_test_lock;
 pthread_cond_t cond_test;
 sem_t test_sem;
+pthread_mutex_t mutex_balance_lock;
+
 // Set holding account number of accounts currently
 // making transactions
 unordered_set<int> accountSet;
@@ -18,6 +20,7 @@ int main() {
     srand(time(NULL));
     // initialize
     pthread_mutex_init(&mutex_lock, NULL);
+    pthread_mutex_init(&mutex_balance_lock, NULL);
     pthread_cond_init(&cond, NULL);
     unordered_set<int> accountSet;
     sem_init(&test_sem, 0, NTEST);
