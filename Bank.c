@@ -8,6 +8,9 @@ Bank *Bank_new(int numAccounts, int initialBalance) {
     b->accounts = (Account **)malloc(numAccounts * sizeof(Account *));
     for(int i = 0; i < numAccounts; ++i) {
         b->accounts[i] = Account_new(i, initialBalance);
+        pthread_cond_init(&b->accounts[i]->cond_balance, NULL);
+        printf("Account\t[%d]\tcreated\t& CV made as well\n", i);
+
     }
     
     return b;
@@ -45,6 +48,7 @@ void Bank_transfer(Bank *b, int from, int to, int amount) {
       // Join test thread after done executing Bank_test()
       pthread_join(testing_thread, NULL);
     }
+
 
     if(Account_withdraw(b->accounts[from], amount)) {
         Account_deposit(b->accounts[to], amount);
